@@ -1,10 +1,5 @@
 import { Table, Model, Column, DataType } from 'sequelize-typescript';
 
-enum RolesEnum {
-  Admin = 'admin',
-  Branch = 'branch'
-}
-
 @Table({
   timestamps: true,
   tableName: 'users',
@@ -25,22 +20,21 @@ export default class User extends Model {
   })
     name!: string;
 
-	@Column({
-		type: DataType.STRING,
-		allowNull: false
-	})
-		password!: string;
+  @Column({
+    type: DataType.STRING,
+    allowNull: false,
+  })
+    email!: string;
 
-		@Column({
-			type: DataType.ENUM(...Object.values(RolesEnum)),
-			defaultValue: RolesEnum.Branch,
-			allowNull: false,
-		})
-		role!: RolesEnum;
+	@Column({
+	  type: DataType.STRING,
+	  allowNull: false
+	})
+	  password!: string;
 
   @Column({
     type: DataType.BOOLEAN,
-		defaultValue: false,
+    defaultValue: false,
     allowNull: false
   })
     disabled!: boolean;
