@@ -13,7 +13,7 @@ const sequelize = new Sequelize({
   host: process.env.POSTGRESQL_HOST,
   dialect: 'postgres',
   omitNull: true,
-  models: [__dirname + '/**/*.model.ts'],
+  models: [__dirname + '/**/*.model.js'],
   logging: false
 });
 
