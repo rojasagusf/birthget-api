@@ -4,10 +4,9 @@ const SECRET = process.env.JWT_SECRET as jwt.Secret;
 const EXPIRATION = process.env.JWT_TOKEN_EXPIRATION;
 const ISSUER = process.env.JWT_ISSUER;
 
-
-export function createToken() {
+export function createToken(id: number) {
   return jwt.sign(
-    {name: process.env.AUTH_USERNAME},
+    {id},
     SECRET,
     {
       expiresIn: EXPIRATION,
