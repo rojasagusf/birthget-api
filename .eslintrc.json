@@ -35,6 +35,7 @@
             "always"
         ],
         "@typescript-eslint/no-namespace": "off",
-        "no-mixed-spaces-and-tabs": "off"
+        "no-mixed-spaces-and-tabs": "off",
+        "@typescript-eslint/no-explicit-any": ["off"]
     }
 }
