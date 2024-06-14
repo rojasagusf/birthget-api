@@ -17,7 +17,7 @@ export const registerUser = async (req: Request, res: Response) => {
     const user = await User.create(formattedData);
 
     if (user) {
-      const token = createToken(user.id);
+      const token = createToken(user.id, user.name);
 
       res.cookie('token', token, { maxAge: 1 * 24 * 60 * 60, httpOnly: true });
       return res.status(201).json(token);
@@ -63,7 +63,7 @@ export const loginUser = async (req: Request, res: Response) => {
       });
     }
 
-    const token = createToken(user.id);
+    const token = createToken(user.id, user.name);
 
     res.cookie('token', token, { maxAge: 1 * 24 * 60 * 60, httpOnly: true });
     return res.status(200).json(token);
