@@ -1,4 +1,5 @@
-import { Table, Model, Column, DataType } from 'sequelize-typescript';
+import { Table, Model, Column, DataType, HasMany } from 'sequelize-typescript';
+import Friend from './friend.model';
 
 @Table({
   timestamps: true,
@@ -33,9 +34,18 @@ export default class User extends Model {
 	  password!: string;
 
   @Column({
+    type: DataType.INTEGER,
+    allowNull:true
+  })
+    cellphone!: number;
+
+  @Column({
     type: DataType.BOOLEAN,
     defaultValue: false,
     allowNull: false
   })
     disabled!: boolean;
+
+  @HasMany(() => Friend)
+    friends!: Friend[];
 }
