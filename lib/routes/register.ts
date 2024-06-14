@@ -1,6 +1,8 @@
 import express from 'express';
 import { validateUserExists } from '../utils/middlewares/auth';
 import { registerUser } from '../controllers/authController';
+import validateBodyFields from '../utils/middlewares/validate.body-fields';
+import Joi from 'joi';
 
 const router = express.Router();
 
@@ -30,6 +32,11 @@ const router = express.Router();
 
 router.post(
   '/register',
+  validateBodyFields(Joi.object({
+    name: Joi.string().min(3).max(200).required(),
+    email: Joi.string().email().required(),
+    password: Joi.string().min(6).max(14).required()
+  })),
   validateUserExists,
   registerUser
 );

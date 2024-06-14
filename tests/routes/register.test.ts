@@ -4,10 +4,13 @@ import { start } from '../mocks/app';
 import request from 'supertest';
 import { Application } from 'express';
 import User from '../../lib/models/user.model';
-import bcryptjs from 'bcryptjs';
 
 describe('POST /api/register', () => {
   let application: Application;
+  const matchJwt = (token: string) => {
+    const jwtRegex = /^[\w-]*\.[\w-]*\.[\w-]*$/;
+    return jwtRegex.test(token);
+  };
 
   before(function () {
     application = start();
@@ -23,6 +26,32 @@ describe('POST /api/register', () => {
 
   after(() => {
     return User.destroy({where: {}});
+  });
+
+  it('Should fail with no body', () => {
+    return request(application)
+      .post('/api/register')
+      .send({})
+      .set('Accept', 'application/json')
+      .expect(400)
+      .then((response) => {
+        response.body.code.should.be.equal('invalid_fields');
+      });
+  });
+
+  it('Should fail with invalid fields in body', () => {
+    return request(application)
+      .post('/api/register')
+      .send({
+        name: 'User 1',
+        email: 'test123@example.com',
+        password: '123'
+      })
+      .set('Accept', 'application/json')
+      .expect(400)
+      .then((response) => {
+        response.body.code.should.be.equal('invalid_fields');
+      });
   });
 
   it('Should fail with user already exists', () => {
@@ -52,11 +81,7 @@ describe('POST /api/register', () => {
       .set('Accept', 'application/json')
       .expect(201)
       .then(async(response) => {
-        const isPassword = await bcryptjs.compare('12345678', response.body.password);
-        response.body.id.should.be.equal(1);
-        response.body.name.should.be.equal('User test');
-        response.body.email.should.be.equal('test2@example.com');
-        isPassword.should.be.equal(true);
+        matchJwt(response.body).should.be.equal(true);
       });
   });
 });

@@ -8,6 +8,10 @@ import bcryptjs from 'bcryptjs';
 
 describe('POST /api/login', () => {
   let application: Application;
+  const matchJwt = (token: string) => {
+    const jwtRegex = /^[\w-]*\.[\w-]*\.[\w-]*$/;
+    return jwtRegex.test(token);
+  };
 
   before(async function () {
     application = start();
@@ -23,6 +27,31 @@ describe('POST /api/login', () => {
 
   after(() => {
     return User.destroy({where: {}});
+  });
+
+  it('Should fail with no body', () => {
+    return request(application)
+      .post('/api/login')
+      .send({})
+      .set('Accept', 'application/json')
+      .expect(400)
+      .then((response) => {
+        response.body.code.should.be.equal('invalid_fields');
+      });
+  });
+
+  it('Should fail with invalid fields in body', () => {
+    return request(application)
+      .post('/api/login')
+      .send({
+        email: 'test123@example.com',
+        password: '123'
+      })
+      .set('Accept', 'application/json')
+      .expect(400)
+      .then((response) => {
+        response.body.code.should.be.equal('invalid_fields');
+      });
   });
 
   it('Should fail with user not exists', () => {
@@ -65,11 +94,7 @@ describe('POST /api/login', () => {
       .set('Accept', 'application/json')
       .expect(200)
       .then(async(response) => {
-        const isPassword = await bcryptjs.compare('12345678', response.body.password);
-        response.body.id.should.be.equal(1);
-        response.body.name.should.be.equal('User 1');
-        response.body.email.should.be.equal('test@example.com');
-        isPassword.should.be.equal(true);
+        matchJwt(response.body).should.be.equal(true);
       });
   });
 });
