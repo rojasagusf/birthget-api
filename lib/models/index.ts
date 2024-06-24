@@ -5,7 +5,7 @@ const NODE_ENV = process.env.NODE_ENV || 'production';
 const CONN_MAX_ATTEMPTS = 5;
 const CONN_INTERVAL = 1;
 
-const sequelize = new Sequelize({
+export const sequelize = new Sequelize({
   database: process.env.POSTGRESQL_DB,
   username: process.env.POSTGRESQL_USER,
   password: process.env.POSTGRESQL_PASSWORD,
@@ -48,7 +48,7 @@ async function initializeDb() {
     logger.info('Database connection established');
 
     if (['testing', 'development'].includes(NODE_ENV)) {
-      await sequelize.sync();
+      await sequelize.sync({alter: true});
       logger.info('Database synchronized');
     }
   } catch (error) {

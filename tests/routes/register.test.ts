@@ -82,6 +82,16 @@ describe('POST /api/register', () => {
       .expect(201)
       .then(async(response) => {
         matchJwt(response.body).should.be.equal(true);
+
+        return User.findAll();
+      })
+      .then((users) => {
+        users.length.should.be.equal(2);
+        const userCreated = users[1].toJSON();
+
+        userCreated.name.should.be.equal('User test');
+        userCreated.email.should.be.equal('test2@example.com');
+        userCreated.active.should.be.equal(false);
       });
   });
 });

@@ -1,6 +1,11 @@
 import { Table, Model, Column, DataType, HasMany } from 'sequelize-typescript';
 import Friend from './friend.model';
 
+enum sourceEnum {
+  Whatsapp = 'whatsapp',
+  Email = 'email'
+}
+
 @Table({
   timestamps: true,
   tableName: 'users',
@@ -40,11 +45,17 @@ export default class User extends Model {
     cellphone!: number;
 
   @Column({
+    type: DataType.ENUM(sourceEnum.Email, sourceEnum.Whatsapp),
+    allowNull: true,
+  })
+    source!: sourceEnum;
+
+  @Column({
     type: DataType.BOOLEAN,
     defaultValue: false,
     allowNull: false
   })
-    disabled!: boolean;
+    active!: boolean;
 
   @HasMany(() => Friend)
     friends!: Friend[];
