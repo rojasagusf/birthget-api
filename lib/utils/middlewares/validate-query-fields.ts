@@ -1,7 +1,8 @@
-'use strict';
+import { NextFunction, Request, Response } from 'express';
+import { Schema } from 'joi';
 
-export default function validateQueryFields(validationSchema) {
-  return (req, res, next) => {
+export default function validateQueryFields(validationSchema: Schema) {
+  return (req: Request, res: Response, next: NextFunction) => {
     if (typeof req.query.status === 'string') {
       req.query.status = [req.query.status];
     }

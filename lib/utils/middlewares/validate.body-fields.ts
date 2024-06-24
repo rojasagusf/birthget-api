@@ -1,6 +1,7 @@
 import { NextFunction, Request, Response } from 'express';
+import { Schema } from 'joi';
 
-export default function validateBodyFields(validationSchema) {
+export default function validateBodyFields(validationSchema: Schema) {
   return (req: Request, res: Response, next: NextFunction) => {
     const {error} = validationSchema.validate(req.body);
     if (error) {
