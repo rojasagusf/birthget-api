@@ -4,13 +4,11 @@ import { start } from '../mocks/app';
 import request from 'supertest';
 import { Application } from 'express';
 import User from '../../lib/models/user.model';
+import nodemailerMock from 'nodemailer-mock';
+import CodeVerification from '../../lib/models/codeverification.model';
 
 describe('POST /api/register', () => {
   let application: Application;
-  const matchJwt = (token: string) => {
-    const jwtRegex = /^[\w-]*\.[\w-]*\.[\w-]*$/;
-    return jwtRegex.test(token);
-  };
 
   before(function () {
     application = start();
@@ -19,13 +17,34 @@ describe('POST /api/register', () => {
         id: 10,
         name: 'User 1',
         email: 'test@example.com',
-        password: 'test'
+        password: 'test',
+        active: true
       })
     ]);
   });
 
   after(() => {
-    return User.destroy({where: {}});
+    return CodeVerification.destroy({
+      truncate: true
+    })
+      .then(() => {
+        return User.destroy({where: {}});
+      });
+  });
+
+  beforeEach(() => {
+    nodemailerMock.mock.reset();
+    nodemailerMock.mock.setShouldFailCheck((email) => {
+      if (!email.data.to) return true;
+      if (!(email.data.to as Array<string>).includes('test2@example.com')) {
+          return true;
+      }
+      return false;
+  });
+  });
+
+  afterEach(() => {
+    nodemailerMock.mock.reset();
   });
 
   it('Should fail with no body', () => {
@@ -81,7 +100,7 @@ describe('POST /api/register', () => {
       .set('Accept', 'application/json')
       .expect(201)
       .then(async(response) => {
-        matchJwt(response.body).should.be.equal(true);
+        response.body.should.be.equal('Email sended');
 
         return User.findAll();
       })
@@ -92,6 +111,15 @@ describe('POST /api/register', () => {
         userCreated.name.should.be.equal('User test');
         userCreated.email.should.be.equal('test2@example.com');
         userCreated.active.should.be.equal(false);
+
+        return CodeVerification.findAll();
+      })
+      .then((codeVerifications) => {
+        codeVerifications.length.should.be.equal(1);
+
+        const mailSended = nodemailerMock.mock.getSentMail();
+        mailSended.should.have.length(1);
+        mailSended[0].to!.should.be.equal('test2@example.com');
       });
   });
 });
