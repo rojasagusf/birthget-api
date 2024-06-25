@@ -8,7 +8,7 @@ interface PublicPath {
 const publicPath: PublicPath = {
   get: [],
   patch: [],
-  post: ['api/login', 'api/register'],
+  post: ['api/login', 'api/register', 'api/codeverifier'],
   delete: []
 };
 
