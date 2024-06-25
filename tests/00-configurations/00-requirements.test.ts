@@ -4,3 +4,5 @@ mockery.enable({warnOnUnregistered: false});
 import jsonwebtokenMock from '../mocks/jsonwebtoken-mock';
 const mockJWT = jsonwebtokenMock(realJWT);
 mockery.registerMock('jsonwebtoken', mockJWT);
+import nodemailerMock from 'nodemailer-mock';
+mockery.registerMock('nodemailer', nodemailerMock);

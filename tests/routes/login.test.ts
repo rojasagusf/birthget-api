@@ -20,7 +20,15 @@ describe('POST /api/login', () => {
         id: 1,
         name: 'User 1',
         email: 'test@example.com',
-        password: await bcryptjs.hash('12345678', 10)
+        password: (await bcryptjs.hash('12345678', 10)),
+        active: true
+      }),
+      User.create({
+        id: 2,
+        name: 'User 2',
+        email: 'test2@example.com',
+        password: (await bcryptjs.hash('12345678', 10)),
+        active: false
       })
     ]);
   });
@@ -66,6 +74,21 @@ describe('POST /api/login', () => {
       .then((response) => {
         response.body.code.should.be.equal('user_not_exists');
         response.body.message.should.be.equal('User not exists');
+      });
+  });
+
+  it('Should fail with user not active', () => {
+    return request(application)
+      .post('/api/login')
+      .send({
+        email: 'test2@example.com',
+        password: '12345678'
+      })
+      .set('Accept', 'application/json')
+      .expect(400)
+      .then((response) => {
+        response.body.code.should.be.equal('user_not_active');
+        response.body.message.should.be.equal('User is not active');
       });
   });
 
