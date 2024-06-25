@@ -1,5 +1,6 @@
-import { Table, Model, Column, DataType, HasMany } from 'sequelize-typescript';
+import { Table, Model, Column, DataType, HasMany, HasOne } from 'sequelize-typescript';
 import Friend from './friend.model';
+import CodeVerification from './codeverification.model';
 
 enum sourceEnum {
   Whatsapp = 'whatsapp',
@@ -59,4 +60,7 @@ export default class User extends Model {
 
   @HasMany(() => Friend)
     friends!: Friend[];
+
+  @HasOne(() => CodeVerification)
+    codeVerification!: CodeVerification;
 }
