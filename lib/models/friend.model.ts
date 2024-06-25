@@ -1,11 +1,6 @@
 import { Table, Model, Column, DataType, ForeignKey, BelongsTo } from 'sequelize-typescript';
 import User from './user.model';
 
-enum sourceEnum {
-  Whatsapp = 'whatsapp',
-  Email = 'email'
-}
-
 @Table({
   timestamps: true,
   tableName: 'friends',
@@ -27,10 +22,10 @@ export default class Friend extends Model {
     name!: string;
 
   @Column({
-    type: DataType.ENUM(sourceEnum.Email, sourceEnum.Whatsapp),
-    allowNull: false,
+    type: DataType.DATEONLY,
+    allowNull: true,
   })
-    source!: sourceEnum;
+    birthdate!: Date;
 
   @ForeignKey(() => User)
   @Column({
