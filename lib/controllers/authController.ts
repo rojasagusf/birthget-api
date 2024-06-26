@@ -159,7 +159,10 @@ export const loginUser = async (req: Request, res: Response) => {
     const token = createToken(user.id, user.name);
 
     res.cookie('token', token, { maxAge: 1 * 24 * 60 * 60, httpOnly: true });
-    return res.status(200).json(token);
+    return res.status(200).json({
+      token,
+      user
+    });
   } catch (error) {
     logger.error(`loginUser error: ${(error as Error).message}`);
     return res.status(500).json({

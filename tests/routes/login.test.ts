@@ -117,7 +117,11 @@ describe('POST /api/login', () => {
       .set('Accept', 'application/json')
       .expect(200)
       .then(async(response) => {
-        matchJwt(response.body).should.be.equal(true);
+        matchJwt(response.body.token).should.be.equal(true);
+        response.body.user.id.should.be.equal(1);
+        response.body.user.name.should.be.equal('User 1');
+        response.body.user.email.should.be.equal('test@example.com');
+        response.body.user.active.should.be.equal(true);
       });
   });
 });
