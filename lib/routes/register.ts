@@ -14,18 +14,13 @@ const router = express.Router();
  * @bodyparam {string} [email] user email
  * @bodyparam {string} [password] user password
  * @response {201} OK
- * @responsebody {object} [user] user created
- * @responsebody {number} [user.id] person identifier
- * @responsebody {string} [user.name] name
- * @responsebody {string} [user.email] email
- * @responsebody {boolean} [user.password] password
  * @response {400} User already exists
  * @responsebody {string} [code] user_already_exists
  * @responsebody {string} [message] User already exists
  * @response {400} Invalid user creation
  * @responsebody {string} [code] invalid_user_creation
  * @responsebody {string} [message] Invalid user creation
- * @response {500} Error creating user
+ * @response {500} Error registering user
  * @responsebody {string} [code] internal_error
  * @responsebody {string} [message] Internal error
  */

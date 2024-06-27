@@ -1,6 +1,6 @@
 'use strict';
 import { Op } from 'sequelize';
-import { Filters } from '../../../types/parsed-params';
+import { Filters } from '../../types/parsed-params';
 import { Request, Response, NextFunction } from 'express';
 
 interface Configurations {

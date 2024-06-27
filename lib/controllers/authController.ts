@@ -3,10 +3,12 @@ import bcryptjs from 'bcryptjs';
 import User from '../models/user.model';
 import logger from '../logger';
 import { createToken } from '../utils/jwt-utils';
-import sendMail from '../utils/mail-sender';
 import { sequelize } from '../models';
 import CodeVerification from '../models/codeverification.model';
 import crypto from 'crypto';
+import sendEmailTemplate from '../utils/mail-templates';
+
+const WEB_URL = process.env.WEB_URL;
 
 export const registerUser = async (req: Request, res: Response) => {
   const transaction = await sequelize.transaction();
@@ -23,10 +25,7 @@ export const registerUser = async (req: Request, res: Response) => {
 
     if (!user) {
       await transaction.rollback();
-      return res.status(400).json({
-        code: 'invalid_user_creation',
-        message: 'Invalid user creation'
-      });
+      throw new Error('Error creating user');
     }
 
     const codeVerifier = await CodeVerification.create({
@@ -36,84 +35,24 @@ export const registerUser = async (req: Request, res: Response) => {
 
     if (!codeVerifier) {
       await transaction.rollback();
-      return res.status(400).json({
-        code: 'invalid_code_verifier_creation',
-        message: 'Invalid code verifier creation'
-      });
+      throw new Error('Error creating code verification');
     }
 
-    const html = `<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-</head>
-<style>
-    html, body {
-        box-sizing: border-box;
-        padding: 0;
-        margin: 0;
-        color: white;
-    }
-    header {
-        background-color: #0d0d0d;
-        padding: 1rem;
-        display: flex;
-        justify-content: start;
-        align-items: center;
-    }
-    main {
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        align-items: center;
-    }
-    p {
-        color: #0d0d0d;
-        font-weight: bold;
-        font-size: 2rem;
-    }
-    button {
-        font-size: 1.2rem;
-        padding: .5rem 1rem;
-        background-color: #29cc8d;
-        border: none;
-        border-radius: 3px;
-        color: white;
-        font-weight: bold;
-        cursor: pointer;
-    }
-</style>
-<body>
-    <header>
-        <h1>Birthget</h1>
-    </header>
-    <main>
-        <p>Welcome! You’ve signed up as ${user.name} at Letterboxd!</p>
-        <a href="http://localhost:3000/transaction/${codeVerifier.transaction}">
-            <button>Validate</button>
-        </a>
-        <p>
-            Please validate your email address by clicking the above button.
-        </p>
-    </main>
-    <footer>
-        <p>
-            Happy birthday,
-            <a href="http://localhost:3000">
-              Birthget
-            </a>
-            .
-        </p>
-    </footer>
-</body>
-</html>`;
+    await sendEmailTemplate(
+      'email-validation',
+      user.email,
+      'Email verification',
+      {
+        USERNAME: user.name,
+        TRANSACTION: codeVerifier.transaction,
+        WEBURL: WEB_URL || '',
+      }
+    );
 
     await transaction.commit();
-    await sendMail(user.email, 'Please validate your Birthget account', html);
-
-    return res.status(201).json('Email sended');
+    return res.status(201).json({
+      sended: true
+    });
   } catch (error) {
     await transaction.rollback();
     logger.error(`registerUser error: ${(error as Error).message}`);
@@ -143,8 +82,8 @@ export const loginUser = async (req: Request, res: Response) => {
     if (!user.active) {
       return res.status(400).json({
         code: 'user_not_active',
-        message: 'User is not active'
-      })
+        message: 'User not active'
+      });
     }
 
     const samePassword = await bcryptjs.compare(password, user.password);

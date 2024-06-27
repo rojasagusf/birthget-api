@@ -88,7 +88,7 @@ describe('POST /api/login', () => {
       .expect(400)
       .then((response) => {
         response.body.code.should.be.equal('user_not_active');
-        response.body.message.should.be.equal('User is not active');
+        response.body.message.should.be.equal('User not active');
       });
   });
 

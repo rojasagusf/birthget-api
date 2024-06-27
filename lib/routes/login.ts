@@ -20,6 +20,9 @@ const router = express.Router();
  * @response {400} User not exists
  * @responsebody {string} [code] user_not_exists
  * @responsebody {string} [message] User not exists
+ * @response {400} User not active
+ * @responsebody {string} [code] user_not_active
+ * @responsebody {string} [message] User not active
  * @response {400} Invalid authentication
  * @responsebody {string} [code] invalid_authentication
  * @responsebody {string} [message] Invalid authentication

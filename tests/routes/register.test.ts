@@ -37,10 +37,10 @@ describe('POST /api/register', () => {
     nodemailerMock.mock.setShouldFailCheck((email) => {
       if (!email.data.to) return true;
       if (!(email.data.to as Array<string>).includes('test2@example.com')) {
-          return true;
+        return true;
       }
       return false;
-  });
+    });
   });
 
   afterEach(() => {
@@ -100,7 +100,7 @@ describe('POST /api/register', () => {
       .set('Accept', 'application/json')
       .expect(201)
       .then(async(response) => {
-        response.body.should.be.equal('Email sended');
+        response.body.sended.should.be.equal(true);
 
         return User.findAll();
       })
