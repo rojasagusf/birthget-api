@@ -8,7 +8,7 @@ import publicPaths from './config/public-paths';
 import * as routes from './lib/routes';
 import { extractJwt } from './lib/utils/jwt-utils';
 import cookieParser from 'cookie-parser';
-import './types';
+import './lib/types';
 
 const initialize = () => {
   app.use(cors());
