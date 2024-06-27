@@ -79,12 +79,12 @@ export const deleteFriendById = async(req: Request, res: Response) => {
 };
 
 export const createFriend = async(req: Request, res: Response) => {
-  const {name, source} = req.body;
+  const {name, birthdate} = req.body;
 
   try {
     const newFriend = await Friend.create({
       name,
-      source,
+      birthdate,
       userId: Number(req.user.sub)
     });
 
@@ -98,35 +98,28 @@ export const createFriend = async(req: Request, res: Response) => {
   }
 };
 
-export const updateFriendById = async(req: Request, res: Response) => {
-  const {id} = req.params;
-  const {name, source} = req.body;
+export const updateFriendById = async (req: Request, res: Response) => {
+  const { id } = req.params;
 
   try {
-    const friendFound = await Friend.findOne({
-      where: {
-        id
-      }
+    const [updatedRows, [updatedFriend]] = await Friend.update(req.body, {
+      where: { id },
+      returning: true,
     });
 
-    if (!friendFound) {
+    if (updatedRows === 0) {
       return res.status(400).json({
         code: 'friend_not_exists',
-        message: 'Friend not exists'
+        message: 'Friend not exists',
       });
     }
 
-    friendFound.name = name;
-    friendFound.source = source;
-
-    await friendFound.save();
-
-    return res.status(200).json(friendFound);
+    return res.status(200).json(updatedFriend);
   } catch (error) {
     logger.error(`updateFriendById error: ${(error as Error).message}`);
     return res.status(500).json({
       code: 'internal_error',
-      message: 'Internal error'
+      message: 'Internal error',
     });
   }
 };

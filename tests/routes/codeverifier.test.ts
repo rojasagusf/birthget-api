@@ -31,7 +31,7 @@ describe('POST /api/codeverifier', () => {
             transaction: 'abcdefg',
             userId: 1
           })
-        ])
+        ]);
       });
   });
 

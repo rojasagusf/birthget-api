@@ -19,7 +19,7 @@ const router = express.Router();
  * @responsebody {Array<object>} [*] friends
  * @responsebody {number} [*.id] Unique identifier
  * @responsebody {string} [*.name] Friend name
- * @responsebody {string} [*.source] Source of notify
+ * @responsebody {date} [*.birthdate] Friend birthday
  * @responsebody {string} [*.userId] User relationship identifier
  * @response {500} Error in get friends
  * @responsebody {string} [code] internal_error
@@ -50,7 +50,7 @@ router.get(
  * @responsebody {object} [friend] Friend found
  * @responsebody {number} [friend.id] Unique identifier
  * @responsebody {string} [friend.name] Friend name
- * @responsebody {string} [friend.source] Source of notify
+ * @responsebody {date} [friend.birthdate] Friend birth date
  * @responsebody {string} [friend.userId] User relationship identifier
  * @response {500} Friend not found
  * @responsebody {string} [code] friend_not_found
@@ -70,12 +70,12 @@ router.get(
  * @description Register a friend
  * @route {POST} /api/friends
  * @bodyparam {string} [name] Friend name
- * @bodyparam {string} [source] Notify source
+ * @bodyparam {string} [birthdate] Friend birthdate
  * @response {201} OK
  * @responsebody {object} [friend] Friend created
  * @responsebody {number} [friend.id] Unique identifier
  * @responsebody {string} [friend.name] Friend name
- * @responsebody {string} [friend.source] Source of notify
+ * @responsebody {date} [friend.birthdate] Friend birthdate
  * @responsebody {string} [friend.userId] User relationship identifier
  * @response {500} Error creating friend
  * @responsebody {string} [code] internal_error
@@ -86,7 +86,7 @@ router.post(
   '/friends',
   validateBodyFields(Joi.object({
     name: Joi.string().min(3).max(200).required(),
-    source: Joi.string().valid('whatsapp', 'email').required()
+    birthdate: Joi.date().less('now').required()
   })),
   createFriend
 );
@@ -115,12 +115,12 @@ router.delete(
  * @description Update a friend
  * @route {PATCH} /friends/:id
  * @bodyparam {string} [name] Friend name
- * @bodyparam {string} [source] Notify source
+ * @bodyparam {date} [birthdate] Friend birth date
  * @response {200} OK
  * @responsebody {object} [friend] Friend updated
  * @responsebody {number} [friend.id] Unique identifier
  * @responsebody {string} [friend.name] Friend name
- * @responsebody {string} [friend.source] Source of notify
+ * @responsebody {date} [friend.birthdate] Friend birth date
  * @responsebody {string} [friend.userId] User relationship identifier
  * @response {500} Friend not exists
  * @responsebody {string} [code] friend_not_exists
@@ -134,7 +134,7 @@ router.patch(
   '/friends/:id',
   validateBodyFields(Joi.object({
     name: Joi.string().min(3).max(200).required(),
-    source: Joi.string().valid('whatsapp', 'email').required()
+    birthdate: Joi.date().less('now').required()
   })),
   updateFriendById
 );

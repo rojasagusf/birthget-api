@@ -1,8 +1,8 @@
-import { Request, Response } from "express"
-import CodeVerification from "../models/codeverification.model"
-import logger from "../logger";
-import { createToken } from "../utils/jwt-utils";
-import User from "../models/user.model";
+import { Request, Response } from 'express';
+import CodeVerification from '../models/codeverification.model';
+import logger from '../logger';
+import { createToken } from '../utils/jwt-utils';
+import User from '../models/user.model';
 import { sequelize } from '../models';
 
 export const verificationCode = async(req: Request, res: Response) => {
@@ -44,4 +44,4 @@ export const verificationCode = async(req: Request, res: Response) => {
       message: 'Internal error'
     });
   }
-}
+};
