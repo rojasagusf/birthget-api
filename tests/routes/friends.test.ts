@@ -26,21 +26,21 @@ describe('FRIENDS CRUD', () => {
   beforeEach(() => {
     return Promise.all([
       Friend.create({
-        id: 4,
+        id: 1,
         name: 'Friend 1',
-        source: 'email',
+        birthdate: new Date('2001/01/30'),
         userId: 1
       }),
       Friend.create({
         id: 2,
         name: 'Friend 2',
-        source: 'whatsapp',
+        birthdate: new Date('1999/06/01'),
         userId: 1
       }),
       Friend.create({
         id: 3,
         name: 'Friend 3',
-        source: 'email',
+        birthdate: new Date('1977/03/04'),
         userId: 1
       }),
     ]);
@@ -54,7 +54,9 @@ describe('FRIENDS CRUD', () => {
   });
 
   afterEach(() => {
-    return Friend.destroy({where: {}});
+    return Promise.all([
+      Friend.destroy({where: {}})
+    ]);
   });
 
   describe('GET /api/friends', () => {
@@ -80,21 +82,21 @@ describe('FRIENDS CRUD', () => {
           response.body.length.should.be.equal(3);
           response.body.should.containDeep([
             {
-              id: 4,
+              id: 1,
               name: 'Friend 1',
-              source: 'email',
+              birthdate: '2001-01-30',
               userId: 1
             },
             {
               id: 2,
               name: 'Friend 2',
-              source: 'whatsapp',
+              birthdate: '1999-06-01',
               userId: 1
             },
             {
               id: 3,
               name: 'Friend 3',
-              source: 'email',
+              birthdate: '1977-03-04',
               userId: 1
             }
           ]);
@@ -114,9 +116,8 @@ describe('FRIENDS CRUD', () => {
           response.body.length.should.be.equal(1);
           response.body.should.containDeep([
             {
-              id: 4,
+              id: 1,
               name: 'Friend 1',
-              source: 'email',
               userId: 1
             },
           ]);
@@ -138,7 +139,6 @@ describe('FRIENDS CRUD', () => {
             {
               id: 2,
               name: 'Friend 2',
-              source: 'whatsapp',
               userId: 1
             },
           ]);
@@ -161,7 +161,7 @@ describe('FRIENDS CRUD', () => {
             {
               id: 2,
               name: 'Friend 2',
-              source: 'whatsapp',
+              birthdate: '1999-06-01',
               userId: 1
             },
           ]);
@@ -173,7 +173,7 @@ describe('FRIENDS CRUD', () => {
 
     it('Should fail withouth token', () => {
       return request(application)
-        .get('/api/friends/4')
+        .get('/api/friends/1')
         .set('Accept', 'application/json')
         .expect(401)
         .then((response) => {
@@ -196,15 +196,15 @@ describe('FRIENDS CRUD', () => {
 
     it('Should get a friend by id', () => {
       return request(application)
-        .get('/api/friends/4')
+        .get('/api/friends/1')
         .set('Accept', 'application/json')
         .set('Authorization', 'Bearer token_user_0001')
         .expect(200)
         .then((response) => {
-          response.body.id.should.be.equal(4);
+          response.body.id.should.be.equal(1);
           response.body.name.should.be.equal('Friend 1');
-          response.body.source.should.be.equal('email');
           response.body.userId.should.be.equal(1);
+          response.body.birthdate.should.be.equal('2001-01-30');
         });
     });
   });
@@ -240,15 +240,15 @@ describe('FRIENDS CRUD', () => {
         .post('/api/friends')
         .send({
           name: 'Friend POST',
-          source: 'email'
+          birthdate: new Date('2000/01/01')
         })
         .set('Accept', 'application/json')
         .set('Authorization', 'Bearer token_user_0001')
         .expect(201)
         .then((response) => {
           response.body.name.should.be.equal('Friend POST');
-          response.body.source.should.be.equal('email');
           response.body.userId.should.be.equal(1);
+          response.body.birthdate.should.be.equal('2000-01-01');
 
           return Friend.findAll();
         })
@@ -298,13 +298,13 @@ describe('FRIENDS CRUD', () => {
             {
               id: 3,
               name: 'Friend 3',
-              source: 'email',
+              birthdate: '1977-03-04',
               userId: 1
             },
             {
-              id: 4,
+              id: 1,
               name: 'Friend 1',
-              source: 'email',
+              birthdate: '2001-01-30',
               userId: 1
             }
           ]);
@@ -316,7 +316,7 @@ describe('FRIENDS CRUD', () => {
 
     it('Should fail withouth token', () => {
       return request(application)
-        .patch('/api/friends/4')
+        .patch('/api/friends/1')
         .send({})
         .set('Accept', 'application/json')
         .expect(401)
@@ -328,7 +328,7 @@ describe('FRIENDS CRUD', () => {
 
     it('Should fail withouth fields in body', () => {
       return request(application)
-        .patch('/api/friends/4')
+        .patch('/api/friends/1')
         .send({})
         .set('Accept', 'application/json')
         .set('Authorization', 'Bearer token_user_0001')
@@ -340,18 +340,18 @@ describe('FRIENDS CRUD', () => {
 
     it('Should fail withouth fields in body', () => {
       return request(application)
-        .patch('/api/friends/4')
+        .patch('/api/friends/1')
         .send({
           name: 'Friend 4 updated',
-          source: 'email'
+          birthdate: new Date('2001/01/01'),
         })
         .set('Accept', 'application/json')
         .set('Authorization', 'Bearer token_user_0001')
         .expect(200)
         .then((response) => {
-          response.body.id.should.be.equal(4);
+          response.body.id.should.be.equal(1);
           response.body.name.should.be.equal('Friend 4 updated');
-          response.body.source.should.be.equal('email');
+          response.body.birthdate.should.be.equal('2001-01-01');
         });
     });
   });
