@@ -10,40 +10,42 @@ import Friend from '../../lib/models/friend.model';
 describe('FRIENDS CRUD', () => {
   let application: Application;
 
-  before(async function () {
+  before(() => {
     application = start();
     return Promise.all([
       User.create({
         id: 1,
         name: 'User 1',
         email: 'test@example.com',
-        password: await bcryptjs.hash('12345678', 10),
+        password: bcryptjs.hashSync('12345678', 10),
         cellphone: 1122334455
       })
     ]);
   });
 
   beforeEach(() => {
-    return Promise.all([
-      Friend.create({
-        id: 1,
-        name: 'Friend 1',
-        birthdate: new Date('2001/01/30'),
-        userId: 1
-      }),
-      Friend.create({
-        id: 2,
-        name: 'Friend 2',
-        birthdate: new Date('1999/06/01'),
-        userId: 1
-      }),
-      Friend.create({
-        id: 3,
-        name: 'Friend 3',
-        birthdate: new Date('1977/03/04'),
-        userId: 1
-      }),
-    ]);
+    return Friend.create({
+      id: 1,
+      name: 'Friend 1',
+      birthdate: new Date('2001/01/30'),
+      userId: 1
+    })
+      .then(() => {
+        return Friend.create({
+          id: 2,
+          name: 'Friend 2',
+          birthdate: new Date('1999/06/01'),
+          userId: 1
+        });
+      })
+      .then(() => {
+        return Friend.create({
+          id: 3,
+          name: 'Friend 3',
+          birthdate: new Date('1977/03/04'),
+          userId: 1
+        });
+      });
   });
 
   after(() => {
